@@ -1,0 +1,29 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@{
+    Layout = "Master.cshtml";
+}
+<head>
+    <link rel="stylesheet" type="text/css" href="~/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/responsive.css" />
+</head>
+
+@Html.RenderJsHere()
+
+<div class="main-container">
+    <div class="login">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 login_col">
+                    @Umbraco.RenderMacro("AccountPageMacro") <!-- Render Account Page from the AccountPage Macro -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

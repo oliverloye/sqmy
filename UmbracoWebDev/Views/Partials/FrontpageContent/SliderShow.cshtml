@@ -1,0 +1,75 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@using Umbraco.Web.Models
+@{
+    Layout = null;
+}
+
+@{
+ 
+    var sliders = Model.Content.GetPropertyValue<IEnumerable<IPublishedContent>>("sliders");
+ 
+    var pages = 0;
+}  
+
+<div class="home_slider_container">
+    <!-- Home Slider -->
+    <div class="owl-carousel owl-theme home_slider">
+
+        @foreach (var item in sliders)
+        {
+            pages += 1;
+            var bannerImage = item.GetPropertyValue<IPublishedContent>("frontpageSliderItemImage");
+            var bannerLink = item.GetPropertyValue<Link>("frontpageSliderItemLink");
+
+            <!-- Slider Item -->
+            <div class="owl-item home_slider_item">
+                <div class="home_slider_background" style="background-image:url('@bannerImage.Url')"></div>
+                <div class="home_slider_content_container row align-items-center h-100">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="home_slider_content" data-animation-in="fadeIn" data-animation-out="animate-out fadeOut">
+                                    <div class="home_slider_title">@item.GetPropertyValue("frontpageSliderItemTitle")</div>
+                                    <div class="home_slider_subtitle">@item.GetPropertyValue("frontpageSliderItemDescription")</div>
+
+
+                                    @if (bannerLink != null)
+                                    {
+                                        <div class="button button_light home_button text-uppercase"><a href="@bannerLink.Url">@item.GetPropertyValue("frontpageSliderItemButtonTitle")</a></div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <!-- Home Slider Dots -->
+
+    <div class="home_slider_dots_container">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="home_slider_dots">
+                        <ul id="home_slider_custom_dots" class="home_slider_custom_dots">
+
+                            @for (int i = 1; i < pages + 1; i++)
+                            {
+                                if (i == 1)
+                                {
+                                    <li class="home_slider_custom_dot active">@i<span>.</span></li>
+                                }
+                                else
+                                {
+                                    <li class="home_slider_custom_dot">@i<span>.</span></li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

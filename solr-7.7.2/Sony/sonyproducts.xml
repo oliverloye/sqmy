@@ -1,0 +1,17 @@
+
+<add>
+  <doc>
+    <field name="Product_ID">1</field>
+    <field name="Product_Title">Playstation 4</field>
+    <field name="Product_Name">Sony PS4</field>
+	<field name="Product_HighPic">http1223.dk</field>
+	<field name="Product_LowPic">http12234.dk</field>
+	<field name="Product_ThumbPic">http12235.dk</field>
+	<field name="Product_Desription">Dette er en spilkonsol med mange RAM..</field>
+	<field name="Product_Category_ID">88</field>
+	<field name="Price">9999</field>
+
+  </doc>
+<add/>
+
+  

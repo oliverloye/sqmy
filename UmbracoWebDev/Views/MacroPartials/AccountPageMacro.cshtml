@@ -1,0 +1,71 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+
+@{
+    var loginStatusModel = Members.GetCurrentLoginStatus();
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+    Html.RequiresJs("/umbraco_client/ui/jquery.js");
+    Html.RequiresJs("/umbraco_client/Application/JQuery/jquery.validate.min.js");
+    Html.RequiresJs("/umbraco_client/Application/JQuery/jquery.validate.unobtrusive.min.js");
+
+    var logoutModel = new PostRedirectModel();
+
+    @*
+        Here you can specify a redirect URL for after logging out, by default umbraco will simply
+        redirect to the current page. Example to redirect to the home page:
+
+        logoutModel.RedirectUrl = "/";
+    *@
+}
+
+
+@if (loginStatusModel.IsLoggedIn)
+{
+    <div class="d-flex justify-content-between bd-highlight mb-3">
+        <div class="p-2 bd-highlight">
+            <p>@Umbraco.Field("accountIfLoggedInTitle") @loginStatusModel.Name</p>
+        </div>
+        <div class="p-2 bd-highlight">
+            @using (Html.BeginUmbracoForm<UmbLoginStatusController>("HandleLogout"))
+            {
+                <button>@Umbraco.Field("accountLogoutBtnText")</button>
+                @Html.HiddenFor(m => logoutModel.RedirectUrl)
+            }
+        </div>
+    </div>
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#profile">@Umbraco.Field("accountProfileTabText")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#orders">@Umbraco.Field("accountOrdersTabText")</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#goodstuff">@Umbraco.Field("accountGoodStuffTabText")</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active container" id="profile">@Umbraco.RenderMacro("MemberEditProfileMacro")</div>
+        <div class="tab-pane container" id="orders">
+            @Html.Action("GetAllOrdersForMember", "MemberOrder")
+        </div>
+        <div class="tab-pane container" id="goodstuff"><p>GOOD STUFF GOES HERE</p></div>
+    </div>
+}
+else
+{
+    @Umbraco.RenderMacro("MemberLoginMacro")
+    <hr />
+    @Umbraco.RenderMacro("MemberRegisterMacro")
+}

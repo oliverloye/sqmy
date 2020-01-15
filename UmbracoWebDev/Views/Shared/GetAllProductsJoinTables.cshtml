@@ -1,0 +1,14 @@
+﻿@using UmbracoWebDev
+@using WebControllers.Models
+
+@model IEnumerable<ProdImageInfo>
+
+@foreach (ProdImageInfo item in Model)
+{
+    <div style="border: 1px solid black; margin-bottom: 10px; padding: 5px;">
+        <p><b>ID:</b> @item.Product_ID</p>
+        <p>@item.Product_Name</p>
+        <p>@item.Product_Description</p>
+        <img src="@item.HighPic_Image" />
+    </div>
+}

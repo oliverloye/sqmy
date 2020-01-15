@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <style>
+
+        body {
+            padding: 8px;
+            margin: 0;
+        }
+
+        #header-container {
+            margin-bottom: 50px;
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        .mail-body-item {
+            width: calc(100%/4);
+            float: left;
+        }
+
+        table {
+            border: 0;
+        }
+
+        #info_table_container {
+            padding-bottom: 50px;
+            text-align: left;
+        }
+
+        #order_table_container {
+            padding-bottom: 50px;
+            text-align: left;
+        }
+
+        #order_table_extra {
+            max-width: 400px;
+            float: right;
+            border-bottom: 2px solid black;
+        }
+
+        #order_table {
+            text-align: left !important;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+    </style>
+
+    <div class="container">
+        <div id="header-container">
+            <img src="https://i.imgur.com/w7A6IOh.png" />
+        </div>
+        <h3>Hello {shipping_name},</h3>
+        <p>
+            Thank you for your order!<br />
+            Your product(s) will be sent to the address you specified in the order within two work days and is estimated to arrive at {arrival_date}<br />
+
+        </p>
+        <br />
+        <br />
+       
+        <div id="info_table_container">
+            <table id="info_table">
+                <br />
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p><b>Shipment Info</b></p>
+                            <p>{shipping_email}</p>
+                            <p>{shipping_name}</p>
+                            <p>{shipping_address}</p>
+                            <p>{shipping_city}</p>
+                            <p>{shipping_country}</p>
+                            <p>{shipping_phone}</p>
+                        </td>
+                        <td>
+                            <p><b>Order Info</b></p>
+                            <p>Order: {order_id}</p>
+                            <p>Customer ID: {member_id}</p>
+                            <p>Date: {order_date}</p>
+                            <p></p>
+                            <p></p>
+                            <p></p>
+                        </td>
+                    </tr>
+                </tbody>
+                <br />
+            </table>
+        </div>
+        <br />
+        <br />
+        <br />
+        <sbr />
+        <div id="order_table_container">
+            <table id="order_table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p><b>Product ID</b></p>
+                            <p>{product_ids}</p>
+                        </td>
+                        <td>
+                            <p><b>Product Name</b></p>
+                            <p>{product_names}</p>
+                        </td>
+                        <td>
+                            <p><b>Amount</b></p>
+                            <p>{product_amounts}</p>
+                        </td>
+                        <td>
+                            <p><b>Price</b></p>
+                            <p>{product_prices}</p>
+                        </td>
+                        <td>
+                            <p><b>Total Price</b></p>
+                            <p>{product_prices_total}</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br />
+            <br />
+
+            <table id="order_table_extra">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <p>VAT:</p>
+                            <p>VAT Amount(x):</p>
+                            <p>Total Price:</p>
+                        </td>
+                        <td>
+                            <p>1</p>
+                            <p>1</p>
+                            <p>{order_total}</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

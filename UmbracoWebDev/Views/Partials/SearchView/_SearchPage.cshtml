@@ -1,0 +1,14 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<UmbracoWebDev.Models.SearchModel>
+@using Umbraco.Web
+@using UmbracoWebDev.Models.Cart;
+
+
+@using (Html.BeginUmbracoForm("Submit", "Search", FormMethod.Post))
+{
+    @Html.TextBoxFor(i => Model.Query, new { type = "search" });
+
+    <button class="product_button_searchBtn trans_200">
+        <span>@Umbraco.Field("shopSearchButtonText")</span>
+    </button>
+}
+

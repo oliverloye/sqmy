@@ -1,0 +1,29 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<UmbracoWebDev.Models.ErrorPageModel>
+@{
+    Layout = "";
+}
+<head>
+    <title>404 Page Not Found</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap4/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/404.css">
+</head>
+
+<body>
+    <div id="error">
+        <h3>ERROR</h3>
+        @if (Model.ErrorCode == null)
+        {
+            <p>@Model.ErrorMessage</p>
+        } else if (Model.ErrorMessage == null)
+        {
+            <p>@Model.ErrorCode</p>
+        } else
+        {
+            <p>@Model.ErrorCode : @Model.ErrorMessage</p>
+        }
+    </div>
+</body>

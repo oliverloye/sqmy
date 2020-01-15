@@ -1,0 +1,46 @@
+﻿
+@using UmbracoWebDev
+@using WebControllers.Models;
+@using WebControllers.Helpers;
+@using System.Web;
+
+@model IEnumerable<FeatureDTO>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/css/product_specifications.css">
+</head>
+
+<div class="details_name mb-5">Product Specifications</div>
+<div id="feature-container">
+    @foreach (FeatureDTO feature in Model)
+    {
+        HtmlString valueConverted = new HtmlString(feature.value.Replace(@"\n", "<br>"));
+        <div id="accordion">
+            <div class="card">
+                <div class="card-header feature-card-header">
+                    <div id="feature-row" class="row card-link d-flex justify-content-between">
+                        <div id="feature-row-1" class="col-4 text-left">
+                            <p><b>@feature.dk_name</b></p>
+                        </div>
+                        <div id="feature-row-2" class="col-4">
+                            <p>@valueConverted @feature.en_measureValue</p>
+                        </div>
+                        <div id="feature-row-3" class="col-4 text-right">
+                            <p><span data-toggle="collapse" href="#@feature.id" aria-expanded="true" style="cursor: pointer" >More</span></p>
+                        </div>
+                    </div>
+                </div>
+                @if (!String.IsNullOrEmpty(feature.en_description) || !String.IsNullOrEmpty(feature.dk_description))
+                {
+                    <div id="@feature.id" class="collapse" data-parent="#accordion" style="">
+                        <div id="feature_list_card_body">
+                            <div class="card-body">
+                                <p>@feature.en_description</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

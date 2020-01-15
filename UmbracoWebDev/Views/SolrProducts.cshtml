@@ -1,0 +1,304 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<UmbracoWebDev.Models.Solr.SolrProducts>
+@using ContentModels = Umbraco.Web.PublishedContentModels;
+@using UmbracoWebDev.Models;
+@using UmbracoWebDev.Controllers.SolrControllers;
+@{
+    Layout = "Master.cshtml";
+    SearchModel searchmodel = new SearchModel(Model.Query);
+    int numberOfResults = SolrProductsController.NumberOfSearchResults;
+    string btnQuery;
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/css/categories.css">
+    <link rel="stylesheet" type="text/css" href="~/css/categories_responsive.css">
+    <link rel="stylesheet" type="text/css" href="~/css/nouislider/nouislider.css">
+    <script src="~/scripts/js/nouislider/nouislider.js"></script>
+    <!-- <script src="~/Scripts/js/sliderPrice.js"></script>-->
+</head>
+
+<div class="main-container">
+    <!-- Products -->
+    <div class="products">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Product Sorting -->
+                    <div class="sorting_bar d-flex flex-md-row flex-column align-items-md-center justify-content-md-start">
+                        @{
+                            Html.RenderAction("RenderSearchField", "Search", new { model = searchmodel });
+                        }<!--rendering the login form-->
+                        <div class="sorting_container ml-md-auto">
+                            <div class="sorting">
+                                <ul class="item_sorting">
+                                    <li>
+                                        <span class="sorting_text">@Umbraco.Field("shopSortSpanText")</span>
+                                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                        <ul>
+                                            <li class="product_sorting_btn" data-isotope-option='{ "sortBy": "price" }'><span onclick="price_descending()">@Umbraco.Field("shopSortSpanHigh")</span></li>
+                                            <li class="product_sorting_btn" data-isotope-option='{ "sortBy": "price" }'><span onclick="price_ascending()">@Umbraco.Field("shopSortSpanLow")</span></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="results">@Umbraco.Field("showNumberOfResultsText") <span id="numberOfResults">@numberOfResults</span></div>
+            <div class="row">
+                <!-- Product Menu -->
+                <div class="col-lg-3">
+                    <div id="price_accordion">
+                        <div class="card product_menu_card">
+                            <div class="card-header product_menu_card_header" id="headingOne">
+                                <button class="product_menu_card_button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <span class="product_menu_card_title">Price</span>
+                                </button>
+                            </div>
+                            <div id="collapseOne" class="card-header-child collapse" aria-labelledby="headingOne" data-parent="#accordion" style="">
+                                <div class="card-body card-body product_menu_card_body">
+                                    <!-- Slider -->
+                                    <div id="rangeBox">
+                                        <div class="shop-price-slider-container">
+                                            <div id="product-slider" class="noUi-target noUi-ltr noUi-horizontal"></div>
+                                            <br />
+                                            <div class="row mb-3">
+                                                <div class="col text-left">
+                                                    <input id="input-number1" type="number" min="0" max="1000" step="1">
+                                                </div>
+                                                <div class="col text-right">
+                                                    <input id="input-number2" type="number" min="0" max="1000" step="1">
+                                                </div>
+                                            </div>
+                                            <button style="height: 40px !important;" class="product_button trans_200 w-100" onclick="searchBySlider()">
+                                                <span>GO</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <div id="category_accordion">
+                        <div class="card product_menu_card">
+                            <div class="card-header product_menu_card_header" id="headingOne">
+                                <button class="product_menu_card_button collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <span class="product_menu_card_title">@Umbraco.Field("shopCategoriesBoxText")</span>
+                                </button>
+                            </div>
+                            <div id="collapseTwo" class="card-header-child collapse" aria-labelledby="headingTwo" data-parent="#accordion" style="">
+                                <div class="card-body card-body product_menu_card_body">
+                                    @foreach (var item in Model.RelevantCategories)
+                                    {
+                                        <div class="form-check">
+                                            <!--<label class="form-check-label">-->
+                                            <label>
+                                                @if (item.Category_Name.Contains("&"))
+                                                {
+                                                    string q = item.Category_Name.Replace("&", "%26");
+                                                    btnQuery = "?query=Product_Category_Name%3A\"" + @q + "\"%26rows=30%26start=0";
+                                                }
+                                                else { btnQuery = "?query=Product_Category_Name%3A\"" + @item.Category_Name + "\"%26rows=30%26start=0"; }
+                                                <span onclick="window.location.href = '@btnQuery'">@item.Category_Name (@item.Facet)</span>
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product View-->
+                <div class="col-lg-9">
+                    <div id="product_row" class="row">
+                        @foreach (var item in Model.ProductList)
+                        {
+                            <!-- Product -->
+                            <div class="product col-md-4 col-sm-6 col-xs-12">
+                                <div class="product_container text-center">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="product_image">
+                                                <div class="product_image_container" style="background-image:url(@Url.Action("GetImage","Image", new {prodId =item.ProductId, pictureQuality = "low"}))">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="product_content text-uppercase">
+                                                <div class="product_title"><a href='product?id=@item.ProductId'>@item.ProductTitle</a></div>
+                                                <div class="product_price">$@item.UnitPrice</div>
+                                                <div class="product_info">
+                                                </div>
+                                                <button class="product_button trans_200 w-100" onclick="window.location.href = 'product?id=@item.ProductId'">
+                                                    <span>@Umbraco.Field("shopItemMoreInfoButtonText")</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <p id="PageOverview"></p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="text-center">
+        <button class="product_button trans_200" onclick="pagination_function_left()">
+            <span><</span>
+        </button>
+        <button class="product_button trans_200" onclick="pagination_function_right()">
+            <span>></span>
+        </button>
+
+    </div>
+
+    <!-- Icon Boxes -->
+
+    <div class="icon_boxes">
+        <div class="container">
+            <div class="row icon_box_row">
+
+                <!-- Icon Box -->
+                <div class="col-lg-4 icon_box_col">
+                    <div class="icon_box">
+                        <div class="icon_box_image"><img src="images/icon_1.svg" alt=""></div>
+                        <div class="icon_box_title">Free Shipping Worldwide</div>
+                        <div class="icon_box_text">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam a ultricies metus. Sed nec molestie.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Icon Box -->
+                <div class="col-lg-4 icon_box_col">
+                    <div class="icon_box">
+                        <div class="icon_box_image"><img src="images/icon_2.svg" alt=""></div>
+                        <div class="icon_box_title">Free Returns</div>
+                        <div class="icon_box_text">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam a ultricies metus. Sed nec molestie.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Icon Box -->
+                <div class="col-lg-4 icon_box_col">
+                    <div class="icon_box">
+                        <div class="icon_box_image"><img src="images/icon_3.svg" alt=""></div>
+                        <div class="icon_box_title">24h Fast Support</div>
+                        <div class="icon_box_text">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam a ultricies metus. Sed nec molestie.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Newsletter -->
+
+    <div class="newsletter">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="newsletter_border"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2">
+                    <div class="newsletter_content text-center">
+                        <div class="newsletter_title">Subscribe to our newsletter</div>
+                        <div class="newsletter_text"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam a ultricies metus. Sed nec molestie eros</p></div>
+                        <div class="newsletter_form_container">
+                            <form action="#" id="newsletter_form" class="newsletter_form">
+                                <input type="email" class="newsletter_input" required="required">
+                                <button class="newsletter_button trans_200"><span>Subscribe</span></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/scripts/js/Pagination.js"></script>
+<script src="~/scripts/js/nouislider/nouislider.js"></script>
+<script src="~/scripts/js/nouislider/nouislider.min.js"></script>
+
+
+<script>
+    var html5Slider = document.getElementById('product-slider');
+
+    noUiSlider.create(html5Slider, {
+        start: [0, 1000],
+        connect: true,
+        range: {
+            'min': 0,
+            'max': 1000
+        }
+    });
+</script>
+<script>
+    var inputNumber1 = document.getElementById('input-number1');
+    var inputNumber2 = document.getElementById('input-number2');
+
+    html5Slider.noUiSlider.on('update', function (values, handle) {
+
+        var value = values[handle];
+
+        if (handle) {
+            inputNumber2.value = Math.round(value);
+        } else {
+            inputNumber1.value = Math.round(value);
+        }
+    });
+
+    inputNumber1.addEventListener('change', function () {
+        html5Slider.noUiSlider.set([this.value, null]);
+    });
+
+    inputNumber2.addEventListener('change', function () {
+        html5Slider.noUiSlider.set([null, this.value]);
+    });
+</script>
+
+
+<!-- Url Changing -->
+<script>
+    var min = document.getElementById("input-number1");
+    var max = document.getElementById("input-number2");
+
+
+    function sliderPriceChange(inputMin, inputMax) {
+        var url = window.location.href;
+        if (url.endsWith("/")) {
+            window.location.replace(url + "?query=Price%20%3A%20%5B" + inputMin + "%20TO%20" + inputMax + "%5D%26q=*%3A*%26rows=30%26start=0");
+        }
+        else {
+            var array = url.split("q=", 1)
+            if (url.includes("rows=30" && "TO") == true) {
+                var res = url.replace(array[0], "?query=Price%20%3A%20%5B" + inputMin + "%20TO%20" + inputMax + "%5D%26");
+            }
+            else {
+                var res = url.replace("?query=", "?query=Price%20%3A%20%5B" + inputMin + "%20TO%20" + inputMax + "%5D%26q=");
+            }
+            window.location.replace(res);
+        }
+    }
+
+    function searchBySlider() {
+        minV = Math.round(min.value)
+        maxV = Math.round(max.value)
+        sliderPriceChange(minV, maxV)
+    }
+</script>

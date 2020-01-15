@@ -1,0 +1,78 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+
+@using System.Web.Mvc.Html
+@using ClientDependency.Core.Mvc
+@using Umbraco.Web
+@using Umbraco.Web.Models
+@using Umbraco.Web.Controllers
+@using UmbracoWebDev.Controllers.AccountControllers;
+
+@{
+    var loginModel = new UmbracoWebDev.Models.Account.LoginModel();
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+    Html.RequiresJs("/umbraco_client/ui/jquery.js");
+    Html.RequiresJs("/umbraco_client/Application/JQuery/jquery.validate.min.js");
+    Html.RequiresJs("/umbraco_client/Application/JQuery/jquery.validate.unobtrusive.min.js");
+
+
+    var loginButtonTxt = "";
+    if(String.IsNullOrEmpty(Umbraco.Field("accountLoginBtnText").ToString()))
+    {
+        loginButtonTxt = "Login";
+    } else
+    {
+        loginButtonTxt = Umbraco.Field("accountLoginBtnText").ToString();
+    }
+}
+
+@*@using (Html.BeginUmbracoForm<UmbLoginController>("HandleLogin", null, new { @class = "login" }))
+{
+    @Html.ValidationSummary("", true, Umbraco.Field("loginValidationErrorMsg").ToString())
+    <legend>@Umbraco.Field("profileTabLoginTitle")</legend>
+    <div class="row">
+        <div class="col-sm-6">
+            @Html.TextBoxFor(m => loginModel.Username, new { placeholder = @Umbraco.Field("profileTabUsernameInput") + "...", @class = "login_input" })
+            @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+            {
+                @Html.ValidationMessageFor(m => loginModel.Username, @Umbraco.Field("loginUsernameErrorMsg").ToString(), new { @class = "text-danger" })
+            }
+        </div>
+        <div class="col-sm-6">
+            @Html.PasswordFor(m => loginModel.Password, new { placeholder = @Umbraco.Field("profileTabPasswordText") + "...", @class = "login_input" })
+            @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+            {
+                @Html.ValidationMessageFor(m => loginModel.Password, Umbraco.Field("loginPasswordErrorMsg").ToString(), new { @class = "text-danger" })
+            }
+        </div>
+    </div>
+    <br />
+    <button>@Umbraco.Field("accountLoginBtnText")</button>
+}*@
+
+@using (Html.BeginUmbracoForm<MemberController>("HandleLogin", null, new { @class = "login" }))
+{
+    @Html.ValidationSummary("", true, Umbraco.Field("loginValidationErrorMsg").ToString())
+    @Html.AntiForgeryToken()
+    <legend>@Umbraco.Field("profileTabLoginTitle")</legend>
+    <div class="row">
+        <div class="col-sm-6">
+            @Html.TextBoxFor(m => loginModel.Username, new { placeholder = @Umbraco.Field("profileTabUsernameInput") + "Email", @class = "login_input" })
+            @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+            {
+                @Html.ValidationMessageFor(m => loginModel.Username, @Umbraco.Field("loginUsernameErrorMsg").ToString(), new { @class = "text-danger" })
+            }
+        </div>
+        <div class="col-sm-6">
+            @Html.PasswordFor(m => loginModel.Password, new { placeholder = @Umbraco.Field("profileTabPasswordText") + "Password", @class = "login_input" })
+            @if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+            {
+                @Html.ValidationMessageFor(m => loginModel.Password, Umbraco.Field("loginPasswordErrorMsg").ToString(), new { @class = "text-danger" })
+            }
+        </div>
+    </div>
+    <br />
+    <button>@loginButtonTxt</button>
+}

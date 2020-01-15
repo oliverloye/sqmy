@@ -1,0 +1,54 @@
+﻿
+@using UmbracoWebDev
+@using ClassLibrary.Entity;
+
+@model IEnumerable<Order>
+
+
+@foreach (Order order in Model)
+{
+    <div id="order-accordion" class="mb-2">
+        <div class="card card-order">
+            <div class="card-header" style="border-bottom: 0;" data-toggle="collapse" href="#@order.OrderId" aria-expanded="true">
+                <div id="order-row" class="row card-link d-flex align-items-center">
+                    <div class="col-sm-4">
+                        <p>OrderNr.: @order.OrderId</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p>Shipped: @order.HasBeenShipped</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p>Create Date: @order.OrderDate</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="@order.OrderId" class="collapse" data-parent="#accordion" style="">
+                @foreach (var item in order.OrderDetails)
+                {
+                    <div id="order_list_card_body">
+                        <div class="card-body">
+                            <div id="order-row" class="row card-link d-flex align-items-center">
+                                <div class="col-sm-3">
+                                    <div class="cart_item_image">
+                                        <img src="@Url.Action("GetImage","Image",new { prodId = item.ProductId, pictureQuality = "thumb"})" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <a href='/shop/product?id=@item.ProductId'><p><b>Product id: </b>@item.ProductId</p></a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <p><b>Quantity:</b> @item.Quantity</p>
+                                </div>
+                                <div class="col-sm-3">
+                                    <p><b>Total Price:</b> $@(item.Product.UnitPrice * item.Quantity)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

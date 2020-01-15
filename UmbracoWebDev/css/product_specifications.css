@@ -1,0 +1,22 @@
+﻿
+
+.card {
+    border: 0;
+}
+
+.feature-card-header {
+    background-color: transparent;
+}
+
+#feature-container {
+    border-top: 1px solid rgba(0,0,0,.125);
+}
+
+.card-header {
+    padding: 0.75rem 0 !important;
+}
+
+.card-body {
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    padding: 0.75rem 0;
+}

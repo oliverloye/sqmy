@@ -1,0 +1,284 @@
+﻿﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<UmbracoWebDev.Models.Cart.NewCartModel>
+@using UmbracoWebDev.Models.Cart;
+@using UmbracoWebDev.Controllers.Cart;
+@using System.Linq;
+
+@{
+
+    Layout = "Master.cshtml";
+
+    var loginStatusModel = Members.GetCurrentLoginStatus();
+    var memberInfo = Members.GetCurrentMemberProfileModel();
+    var orderInfo = new ClassLibrary.DTOs.CheckoutOrderDTO();
+}
+<head>
+    <link href="~/css/checkout.css" rel="stylesheet" />
+    <link href="~/css/checkout_responsive.css" rel="stylesheet" />
+</head>
+
+<div class="main-container">
+    <div class="checkout">
+        <div class="container">
+            @if (loginStatusModel.IsLoggedIn)
+            {
+                <div>
+                    @using (Html.BeginUmbracoForm<CartController>("ProcessAndSaveOrder", null, new { @class = "checkout_form", @id = "checkoutForm" }))
+                    {
+                        <div class="row">
+                            <!-- Billing Info -->
+                            <div class="col-lg-6">
+                                <div class="billing checkout_section">
+                                    <div class="section_title">Billing Address</div>
+                                    <div class="section_subtitle">Enter your address info</div>
+                                    <div class="checkout_form_container">
+
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary("", true, Umbraco.Field("loginValidationErrorMsg").ToString())
+                                        <div class="row">
+                                            <div class="col-xl-6">
+                                                <!-- Name -->
+                                                @Html.LabelFor(b => orderInfo.Order.FirstName)
+                                                @Html.TextBoxFor(b => orderInfo.Order.FirstName, new { @class = "checkout_input", @placeholder = "Firstname...", @required = "required" })
+                                                @Html.ValidationMessageFor(b => orderInfo.Order.FirstName)
+                                            </div>
+                                            <div class="col-xl-6 last_name_col">
+                                                <!-- Last Name -->
+                                                @Html.LabelFor(b => orderInfo.Order.LastName)
+                                                @Html.TextBoxFor(b => orderInfo.Order.LastName, new { @class = "checkout_input", @placeholder = "Firstname...", @required = "required" })
+                                                @Html.ValidationMessageFor(b => orderInfo.Order.LastName)
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <!-- Country -->
+                                            @Html.LabelFor(b => orderInfo.Order.Country)
+                                            @Html.TextBoxFor(b => orderInfo.Order.Country, new { @class = "checkout_input", @placeholder = "Country...", @required = "required" })
+                                            @Html.ValidationMessageFor(b => orderInfo.Order.Country)
+                                        </div>
+                                        <div>
+                                            <!-- Address -->
+                                            @Html.LabelFor(b => orderInfo.Order.Address)
+                                            @Html.TextBoxFor(b => orderInfo.Order.Address, new { @class = "checkout_input", @placeholder = "Street & number...", @required = "required" })
+                                            @Html.ValidationMessageFor(b => orderInfo.Order.Address)
+                                        </div>
+                                        <div>
+                                            <!-- Zipcode -->
+                                            @Html.LabelFor(b => orderInfo.Order.PostalCode)
+                                            @Html.TextBoxFor(b => orderInfo.Order.PostalCode, new { @class = "checkout_input", @placeholder = "Zipcode...", @required = "required", @type = "number" })
+                                            @Html.ValidationMessageFor(b => orderInfo.Order.PostalCode)
+                                        </div>
+                                        <div>
+                                            <!-- City / Town -->
+                                            @Html.LabelFor(b => orderInfo.Order.City)
+                                            @Html.TextBoxFor(b => orderInfo.Order.City, new { @class = "checkout_input", @placeholder = "City...", @required = "required" })
+                                            @Html.ValidationMessageFor(b => orderInfo.Order.City)
+                                        </div>
+                                        <div>
+                                            <!-- Phone no -->
+                                            @Html.LabelFor(b => orderInfo.Order.Phone)
+                                            @Html.TextBoxFor(b => orderInfo.Order.Phone, new { @class = "checkout_input", @placeholder = "Firstname...", @required = "required", @type = "number" })
+                                            @Html.ValidationMessageFor(b => orderInfo.Order.Phone)
+                                        </div>
+                                        <div>
+                                            <!-- Email -->
+                                            @Html.LabelFor(b => orderInfo.Order.Email)
+                                            @Html.TextBoxFor(b => orderInfo.Order.Email, new { @class = "checkout_input", @placeholder = "City...", @required = "required", @type = "email" })
+                                            @Html.ValidationMessageFor(b => orderInfo.Order.Email)
+                                        </div>
+                                        @*<div class="checkout_extra">
+                                                <div>
+                                                    <input type="checkbox" id="checkbox_terms" name="regular_checkbox" class="regular_checkbox" checked="checked">
+                                                    <label for="checkbox_terms"><img src="images/check.png" alt=""></label>
+                                                    <span class="checkbox_title">Terms and conditions</span>
+                                                </div>
+                                                <div>
+                                                    <input type="checkbox" id="checkbox_account" name="regular_checkbox" class="regular_checkbox">
+                                                    <label for="checkbox_account"><img src="images/check.png" alt=""></label>
+                                                    <span class="checkbox_title">Create an account</span>
+                                                </div>
+                                                <div>
+                                                    <input type="checkbox" id="checkbox_newsletter" name="regular_checkbox" class="regular_checkbox">
+                                                    <label for="checkbox_newsletter"><img src="images/check.png" alt=""></label>
+                                                    <span class="checkbox_title">Subscribe to our newsletter</span>
+                                                </div>
+                                            </div>*@
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Order Info -->
+                            <div class="col-lg-6">
+                                <div class="order checkout_section">
+                                    <div class="section_title">Your order</div>
+                                    <div class="section_subtitle">Order details</div>
+                                    @if (Model.cartItems.Count > 0)
+                                    {
+                                        <!-- Order details -->
+                                        <div class="order_list_container">
+                                            <div class="order_list_bar d-flex flex-row align-items-center justify-content-start">
+                                                <div class="order_list_title">Product</div>
+                                                <div class="order_list_value ml-auto">Total</div>
+                                            </div>
+                                            <ul class="order_list">
+                                                @foreach (var item in Model.cartItems)
+                                                {
+
+                                                    <li class="d-flex flex-row align-items-center justify-content-start">
+                                                        @{
+                                                            if (item.Quantity <= 1)
+                                                            {
+                                                                <div class="order_list_title">@item.Product.ProductName</div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="order_list_title">@item.Product.ProductName (x@(item.Quantity))</div>
+                                                            }
+                                                        }
+
+                                                        <div class="order_list_value ml-auto">$@Model.TotalCartPrice</div>
+                                                    </li>
+
+                                                }
+
+                                                <hr style="margin-bottom: 30px;border: 1px solid rgba(0,0,0,0.1);">
+
+                                                <li class="d-flex flex-row align-items-center justify-content-start">
+                                                    <div class="order_list_title">Subtotal</div>
+                                                    <div class="order_list_value ml-auto">$@Model.TotalCartPrice</div>
+                                                </li>
+                                                <li class="d-flex flex-row align-items-center justify-content-start">
+                                                    <div class="order_list_title">Shipping</div>
+                                                    <div class="order_list_value ml-auto">Free</div>
+                                                </li>
+                                                <li class="d-flex flex-row align-items-center justify-content-start">
+                                                    <div class="order_list_title">Tax</div>
+                                                    <div class="order_list_value ml-auto">10%</div>
+                                                </li>
+
+                                                <hr style="margin-bottom: 30px;border: 1px solid rgba(0,0,0,0.1);">
+
+                                                <li class="d-flex flex-row align-items-center justify-content-start">
+                                                    <div class="order_list_title">Total</div>
+                                                    @{
+                                                        var totalPr = @Model.TotalCartPrice * 1.10;
+                                                    }
+                                                    <div class="order_list_value ml-auto">$@totalPr</div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <!-- Payment Options -->
+                                        <div class="payment">
+                                            <div class="payment_options">
+                                                <label class="payment_option clearfix">
+                                                    Paypal
+                                                    @Html.RadioButtonFor(b => orderInfo.PaymentMethod, "paypal", new { @onClick = "creditOrPalCheck()", @id = "paypalRadio", @required = "required", @checked="checked" })
+                                                    @*<input id="paypalRadio" type="radio" name="checkoutRadio" value="paypal" onclick="javascript:creditOrPalCheck();">*@
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                                <label class="payment_option clearfix">
+                                                    Credit card
+                                                    @*<input id="creditCardRadio" type="radio" name="checkoutRadio" value="card" onclick="javascript:creditOrPalCheck();">*@
+                                                    @Html.RadioButtonFor(b => orderInfo.PaymentMethod, "card", new { @onClick = "creditOrPalCheck()", @id = "creditCardRadio", @required = "required" })
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div id="creditCardContainer" class="mt-5" style="display: none;">
+                                            <div class="row">
+                                                <div class="col-xl-6">
+                                                    <!-- Name -->
+                                                    Firstname
+                                                    @Html.TextBoxFor(b => orderInfo.Card.first_name, new { @class = "card_input mb-3", @placeholder = "Firstname..."})
+                                                    @Html.ValidationMessageFor(b => orderInfo.Card.first_name)
+                                                </div>
+                                                <div class="col-xl-6">
+                                                    <!-- Last Name -->
+                                                    Lastname
+                                                    @Html.TextBoxFor(b => orderInfo.Card.last_name, new { @class = "card_input mb-3", @placeholder = "Lastname..." })
+                                                    @Html.ValidationMessageFor(b => orderInfo.Card.last_name)
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xl-9">
+                                                    <div>
+                                                        <!-- Card Number -->
+                                                        Card Number
+                                                        @Html.TextBoxFor(b => orderInfo.Card.number, new { @class = "card_input mb-3", @placeholder = "Card Number...", @type = "number" })
+                                                        @Html.ValidationMessageFor(b => orderInfo.Card.number)
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-3">
+                                                    <!-- CVR -->
+                                                    CCV
+                                                    @Html.TextBoxFor(b => orderInfo.Card.cvv2, new { @class = "card_input mb-3", @placeholder = "CVV", @type = "number", @maxlength = "3", @size = "3" })
+                                                    @Html.ValidationMessageFor(b => orderInfo.Card.cvv2)
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    Expiration Month
+                                                    @Html.TextBoxFor(b => orderInfo.Card.expire_month, new { @class = "card_input mb-3", @placeholder = "Expiration Month", @type = "number", @max = "12", @min = "01" })
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    Expiration Year
+                                                    @{
+                                                        var currentYear = DateTime.Now.Year;
+                                                        var year25InFuture = currentYear + 25;
+                                                    }
+                                                    @Html.TextBoxFor(b => orderInfo.Card.expire_year, new { @class = "card_input mb-3", @placeholder = currentYear, @type = "number", @max = year25InFuture, @min = currentYear})
+                                                </div>
+                                            </div>
+                                            @{
+                                                var selectList = new SelectList(
+                                                    new List<SelectListItem>
+                                                    {
+                                                                new SelectListItem {Text = "Visa", Value = "visa"},
+                                                                new SelectListItem {Text = "MasterCard", Value = "mastercard"},
+                                                                new SelectListItem {Text = "Discover", Value = "discover"},
+                                                                new SelectListItem {Text = "Amex", Value = "amex"},}, "Value", "Text");
+                                            }
+                                            Card Type
+                                            @Html.DropDownListFor(b => orderInfo.Card.type, selectList, new { @class = "card_input mb-3", @placeholder = "Expiration Year", @required = "required" })
+
+                                        </div>
+
+                                        <!-- Order Text -->
+                                        if (loginStatusModel.IsLoggedIn && Model.cartItems != null && Model.TotalCartPrice != null)
+                                        {
+                                            <button class="checkout_button trans_200 mt-5" form="checkoutForm">
+                                                <span>Place Order</span>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <div class="order_text-new">Please log into your account to place the order...</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="order_text-new">Your cart is empty...</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p>Please login to complete your order...</p>
+                @Umbraco.RenderMacro("MemberLoginMacro")
+            }
+        </div>
+    </div>
+    <script src="~/Scripts/js/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script>
+        function creditOrPalCheck() {
+            if (document.getElementById('creditCardRadio').checked) {
+                document.getElementById('creditCardContainer').style.display = 'block';
+            }
+            else document.getElementById('creditCardContainer').style.display = 'none';
+        }
+    </script>
+</div>

@@ -1,0 +1,148 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<UmbracoWebDev.Models.Cart.NewCartModel>
+@using Umbraco.Web.Models
+@using UmbracoWebDev.Controllers.Cart;
+@{
+    Layout = "Master.cshtml";
+    var loginStatusModel = Members.GetCurrentLoginStatus();
+    var checkoutLinks = Model.Content.GetPropertyValue<Link>("checkOutPageLink");
+}
+
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/css/cart.css">
+    <link rel="stylesheet" type="text/css" href="~/css/cart_responsive.css">
+</head>
+
+
+
+<div class="main-container">
+    <!-- Cart Info -->
+    <div class="cart_info ">
+        <div class="container">
+            @if (Model.cartItems.Count <= 0)
+            {
+                <div class="section_title">Your cart is empty</div>
+                <div class="row row_cart_buttons">
+                    <div class="col">
+                        <div class="cart_buttons d-flex flex-lg-row flex-column align-items-start justify-content-start">
+                            @if (Request.Url.AbsoluteUri.Contains("kurv"))
+                            {
+                                <div class="button continue_shopping_button"><a href="/butik/">@Umbraco.Field("continueShoppingText")</a></div>
+                            }
+                            @if (Request.Url.AbsoluteUri.Contains("cart_page"))
+                            {
+                                <div class="button continue_shopping_button"><a href="/shop/">@Umbraco.Field("continueShoppingText")</a></div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col">
+                        <!-- Column Titles -->
+                        <div class="cart_info_columns clearfix">
+                            <div class="cart_info_col cart_info_col_product">@Umbraco.Field("productText")</div>
+                            <div class="cart_info_col cart_info_col_price">@Umbraco.Field("productPriceText")</div>
+                            <div class="cart_info_col cart_info_col_quantity">@Umbraco.Field("quanityText")</div>
+                            <div class="cart_info_col cart_info_col_total">@Umbraco.Field("totalPriceText")</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row cart_items_row">
+                    <div class="col">
+                        @foreach (var item in Model.cartItems)
+                        {
+                            <!-- Cart Item -->
+                            <div class="cart_item d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-start">
+                                <!-- Name -->
+                                <div class="cart_item_product d-flex flex-row align-items-center justify-content-start">
+                                    <div class="cart_item_image">
+                                        <img src="@Url.Action("GetImage", "Image", new { prodId = item.Product.ProductId, pictureQuality = "high" })" />
+                                    </div>
+                                    <div class="cart_item_name_container">
+                                        @if (Request.Url.AbsoluteUri.Contains("kurv"))
+                                        {
+                                            <div class="cart_item_name"><a href="/butik/product?id=@item.Product.ProductId">@item.Product.ProductName</a></div>
+                                        }
+
+                                        @if (Request.Url.AbsoluteUri.Contains("cart_page"))
+                                        {
+                                            <div class="cart_item_name"><a href="/shop/product?id=@item.Product.ProductId">@item.Product.ProductName</a></div>
+                                        }
+                                    </div>
+                                </div>
+                                <!-- Price -->
+                                <div class="cart_item_price">$@item.Product.UnitPrice</div>
+                                <!-- Quantity -->
+                                <div class="cart_item_quantity">
+                                    @item.Quantity
+                                </div>
+                                <!-- Total -->
+                                <div class="cart_item_total">$@(item.Product.UnitPrice * item.Quantity)</div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                <div class="row row_cart_buttons">
+                    <div class="col">
+                        <div class="cart_buttons d-flex flex-lg-row flex-column align-items-start justify-content-start">
+                            @if (Request.Url.AbsoluteUri.Contains("kurv"))
+                            {
+                                <div class="button continue_shopping_button"><a href="/butik/">@Umbraco.Field("continueShoppingText")</a></div>
+                            }
+                            @if (Request.Url.AbsoluteUri.Contains("cart_page"))
+                            {
+                                <div class="button continue_shopping_button"><a href="/shop/">@Umbraco.Field("continueShoppingText")</a></div>
+                            }
+
+
+                            <div class="cart_buttons_right ml-lg-auto">
+                                @using (Html.BeginUmbracoForm("ClearCart", "Cart", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button class="product_button trans_200">
+                                        <span>@Umbraco.Field("clearCartText")</span>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row row_extra">
+                    <div class="col-lg-6">
+                        <div class="cart_total">
+                            <div class="section_title">@Umbraco.Field("cartOverview")</div>
+                            @*<div class="section_subtitle">Final info</div>*@
+                            <div class="cart_total_container mb-4">
+                                <ul>
+                                    <li class="d-flex flex-row align-items-center justify-content-start">
+                                        <div class="cart_total_title">@Umbraco.Field("subTotal"):&nbsp&nbsp</div>
+                                        <div class="cart_total_value ml-auto">$@Model.TotalCartPrice</div>
+                                    </li>
+                                    <li class="d-flex flex-row align-items-center justify-content-start">
+                                        <div class="cart_total_title">@Umbraco.Field("shipping"):&nbsp&nbsp</div>
+                                        <div class="cart_total_value ml-auto">Free</div>
+                                    </li>
+                                    <li class="d-flex flex-row align-items-center justify-content-start">
+                                        <div class="cart_total_title">@Umbraco.Field("totalplusShipping"):&nbsp&nbsp</div>
+                                        <div class="cart_total_value ml-auto">$@Model.TotalCartPrice</div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <a href="@checkoutLinks.Url">
+                                <button class="product_button trans_200">
+                                    <span>@Umbraco.Field("checkoutText")</span>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+</div>

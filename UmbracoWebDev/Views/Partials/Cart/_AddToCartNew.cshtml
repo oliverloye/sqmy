@@ -1,0 +1,24 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ClassLibrary.Entity.CartItem>
+@using Umbraco.Web
+@using UmbracoWebDev.Models.Cart;
+@using ClassLibrary.Entity
+
+@{Model.Quantity = 1;} <!--Default start quantity -->
+
+@using (Html.BeginUmbracoForm("AddToCart", "Cart", new CartItem { ProductId = Model.ProductId, Quantity = Model.Quantity }, FormMethod.Post))
+{
+    @Html.AntiForgeryToken();
+    <div class="product_quantity_container">
+        <div class="product_quantity clearfix">
+            <span>Qty</span>
+            @Html.TextBoxFor(i => Model.Quantity, new { type = "number", min = "1", max = "10", @value = "1", @id = "quantity_input", pattern = "[0-9]*" })
+            <div class="quantity_buttons">
+                <div id="quantity_inc_button" class="quantity_inc quantity_control"><i class="fa fa-chevron-up" aria-hidden="true"></i></div>
+                <div id="quantity_dec_button" class="quantity_dec quantity_control"><i class="fa fa-chevron-down" aria-hidden="true"></i></div>
+            </div>
+        </div>
+        <button class="product_button trans_200">
+            <span>Add to cart</span>
+        </button>
+    </div>
+}
